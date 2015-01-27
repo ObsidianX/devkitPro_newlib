@@ -3,10 +3,17 @@
 #ifndef _SYS_PARAM_H
 # define _SYS_PARAM_H
 
-# define HZ (100)
+#ifndef HZ
+# define HZ (60)
+#endif
+#ifndef NOFILE
 # define NOFILE	(60)
-# define PATHSIZE (1024)
+#endif
+#ifndef PATHSIZE
+# define PATHSIZE (4096)
+#endif
 
+#define MAXPATHLEN	4096
 #define BIG_ENDIAN      4321
 #define LITTLE_ENDIAN   1234
 

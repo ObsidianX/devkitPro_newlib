@@ -107,7 +107,7 @@ beginning with <<"LC_">>.
 
 <<localeconv>> returns a pointer to a structure (also defined in
 `<<locale.h>>') describing the locale-specific conventions currently
-in effect.  
+in effect.
 
 <<_localeconv_r>> and <<_setlocale_r>> are reentrant versions of
 <<localeconv>> and <<setlocale>> respectively.  The extra argument
@@ -188,7 +188,12 @@ No supporting OS subroutines are required.
 #define _LC_LAST      7
 #define ENCODING_LEN 31
 
-#ifdef __CYGWIN__ /* Cygwin starts with LC_CTYPE set to "C.UTF-8". */
+#ifdef __CYGWIN__
+#define __DEFAULT_UTF8__
+#endif
+
+
+#ifdef __DEFAULT_UTF8__ /* Cygwin defaults to utf8 which starts with LC_CTYPE set to "C.UTF-8". */
 int __EXPORT __mb_cur_max = 6;
 #else
 int __EXPORT __mb_cur_max = 1;
@@ -199,7 +204,7 @@ int __mlocale_changed = 0;
 char *_PathLocale = NULL;
 
 static
-struct lconv lconv = 
+struct lconv lconv =
 {
   ".", "", "", "", "", "", "", "", "", "",
   CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX,
@@ -240,7 +245,7 @@ char __default_locale[ENCODING_LEN + 1] = DEFAULT_LOCALE;
 static char current_categories[_LC_LAST][ENCODING_LEN + 1] = {
     "C",
     "C",
-#ifdef __CYGWIN__ /* Cygwin starts with LC_CTYPE set to "C.UTF-8". */
+#ifdef __DEFAULT_UTF8__ /* Cygwin starts with LC_CTYPE set to "C.UTF-8". */
     "C.UTF-8",
 #else
     "C",
@@ -264,7 +269,7 @@ static const char *__get_locale_env(struct _reent *, int);
 
 #endif /* _MB_CAPABLE */
 
-#ifdef __CYGWIN__
+#ifdef __DEFAULT_UTF8__
 static char lc_ctype_charset[ENCODING_LEN + 1] = "UTF-8";
 #else
 static char lc_ctype_charset[ENCODING_LEN + 1] = "ASCII";
@@ -280,7 +285,7 @@ _DEFUN(_setlocale_r, (p, category, locale),
 {
 #ifndef _MB_CAPABLE
   if (locale)
-    { 
+    {
       if (strcmp (locale, "POSIX") && strcmp (locale, "C")
 	  && strcmp (locale, ""))
         return NULL;
@@ -969,7 +974,7 @@ _DEFUN_VOID(__locale_cjk_lang)
 }
 
 struct lconv *
-_DEFUN(_localeconv_r, (data), 
+_DEFUN(_localeconv_r, (data),
       struct _reent *data)
 {
 #ifdef __HAVE_LOCALE_INFO__

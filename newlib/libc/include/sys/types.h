@@ -152,7 +152,7 @@ typedef	char *	caddr_t;
     defined(__sparc__) || defined(__SPU__)
 typedef	unsigned long	ino_t;
 #else
-typedef	unsigned short	ino_t;
+typedef	unsigned int	ino_t;
 #endif
 #endif /*__CYGWIN__*/
 
@@ -283,6 +283,9 @@ typedef _TIMER_T_ timer_t;
 
 typedef unsigned long useconds_t;
 typedef long suseconds_t;
+
+typedef __uint32_t fsblkcnt_t;
+typedef __uint32_t fsfilcnt_t;
 
 #include <sys/features.h>
 

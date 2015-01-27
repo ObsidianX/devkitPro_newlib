@@ -17,7 +17,7 @@ typedef long _off_t;
 #endif
 
 #ifndef __dev_t_defined
-typedef short __dev_t;
+typedef int __dev_t;
 #endif
 
 #ifndef __uid_t_defined

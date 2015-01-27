@@ -59,7 +59,7 @@ DESCRIPTION
 	Check libc.a to see if its available on yours.
 */
 
-int
+/*int
 _DEFUN (_gettimeofday_r, (ptr, ptimeval, ptimezone),
      struct _reent *ptr _AND
      struct timeval *ptimeval _AND
@@ -72,5 +72,5 @@ _DEFUN (_gettimeofday_r, (ptr, ptimeval, ptimezone),
     ptr->_errno = errno;
   return ret;
 }
-
+*/
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

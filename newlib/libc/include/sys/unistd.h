@@ -89,9 +89,7 @@ uid_t   _EXFUN(geteuid, (void ));
 gid_t   _EXFUN(getgid, (void ));
 #endif
 int     _EXFUN(getgroups, (int __gidsetsize, gid_t __grouplist[] ));
-#if defined(__CYGWIN__)
 long    _EXFUN(gethostid, (void));
-#endif
 char *  _EXFUN(getlogin, (void ));
 #if defined(_POSIX_THREAD_SAFE_FUNCTIONS)
 int _EXFUN(getlogin_r, (char *name, size_t namesize) );
@@ -230,11 +228,9 @@ _READ_WRITE_RETURN_TYPE _EXFUN(_write, (int __fd, const void *__buf, size_t __nb
 int     _EXFUN(_execve, (const char *__path, char * const __argv[], char * const __envp[] ));
 #endif
 
-#if defined(__CYGWIN__) || defined(__rtems__) || defined(__aarch64__) || defined (__arm__) || defined(__sh__) || defined(__SPU__)
 #if !defined(__INSIDE_CYGWIN__)
 int     _EXFUN(ftruncate, (int __fd, off_t __length));
 int     _EXFUN(truncate, (const char *, off_t __length));
-#endif
 #endif
 
 #if defined(__CYGWIN__) || defined(__rtems__)

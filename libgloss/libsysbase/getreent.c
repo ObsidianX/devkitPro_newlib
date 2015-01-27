@@ -1,8 +1,9 @@
-#if 0
+
 /* default reentrant pointer when multithread enabled */
 
 #include <_ansi.h>
 #include <reent.h>
+#include <sys/iosupport.h>
 
 #ifdef __getreent
 #undef __getreent
@@ -11,7 +12,11 @@
 struct _reent *
 _DEFUN_VOID(__getreent)
 {
-  return _impure_ptr;
+	if ( __syscalls.getreent ) {
+		return __syscalls.getreent();
+	} else {
+		return _impure_ptr;
+	}
 }
 
-#endif
+
