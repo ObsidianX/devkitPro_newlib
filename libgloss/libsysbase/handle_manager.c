@@ -18,20 +18,27 @@ static __handle* handles[MAX_HANDLES] = {
 
 __LOCK_INIT_RECURSIVE(static, __hndl_lock);
 
+void __free_handle(__handle *handle) {
+
+	if ( NULL != handle
+	&& handle != &__stdin_handle
+	&& handle != &__stdout_handle
+	&& handle != &__stderr_handle ) {
+
+		free(handle);
+
+	}
+
+}
+
 void __release_handle(int fd) {
 
 	if ( fd <0 || fd >= MAX_HANDLES ) return;
 
 	__lock_acquire_recursive (__hndl_lock);
 
-	__handle* handle = handles[fd];
-	if ( NULL != handle ) {
-
-		if (handle != &__stdin_handle && handle != &__stdout_handle && handle != &__stderr_handle)
-			free(handle);
-
-		handles[fd] = NULL;
-	}
+	__free_handle(handles[fd]);
+	handles[fd] = NULL;
 
 	__lock_release_recursive (__hndl_lock);
 
@@ -68,14 +75,17 @@ __handle *__get_handle(int fd) {
 
 }
 
-static int __dup(int oldfd) {
+int dup(int oldfd) {
+	int i, ret =-1;
 
-	int i;
+	__lock_acquire_recursive (__hndl_lock);
 
 	if (handles[oldfd]==NULL) {
+		__lock_release_recursive (__hndl_lock);
 		errno = EBADF;
 		return -1;
 	}
+
 
 	for ( i = 0; i < MAX_HANDLES; i++ ) {
 		if ( handles[i] == NULL ) break;
@@ -84,64 +94,63 @@ static int __dup(int oldfd) {
 	if (i<MAX_HANDLES) {
 		handles[i] = handles[oldfd];
 		handles[oldfd]->refcount++;
-		return i;
+		ret = i;
 	}
-
-	return -1;
-}
-
-int dup(int oldfd) {
-
-	__lock_acquire_recursive (__hndl_lock);
-
-	int ret = __dup(oldfd);
-
 	__lock_release_recursive (__hndl_lock);
 
 	return ret;
 
 }
 
-static int __dup2(int oldfd, int newfd) {
+int dup2(int oldfd, int newfd) {
+
+
+	__lock_acquire_recursive (__hndl_lock);
 
 	if ( newfd < 0 || newfd >= MAX_HANDLES ||
+
 		 oldfd < 0 || oldfd >= MAX_HANDLES ||
 		 handles[oldfd] == NULL ) {
 
+		__lock_release_recursive (__hndl_lock);
 		errno = EBADF;
+
 		return -1;
 	}
 
-	if ( newfd == oldfd ) return newfd;
+	if ( newfd == oldfd ) {
+		__lock_release_recursive (__hndl_lock);
+		return newfd;
+	}
 
-	if ( handles[newfd] != NULL) {
 
-		handles[newfd]->refcount--;
+	__handle *handle = handles[newfd];
 
-		if (handles[newfd]->refcount == 0 ) {
+	if ( NULL != handle ) {
 
-			if( devoptab_list[handles[newfd]->device]->close_r != NULL) {
-				devoptab_list[handles[newfd]->device]->close_r(_REENT,(unsigned int)handles[newfd]->fileStruct);
-			}
-			__release_handle(newfd);
-		}
+		handle->refcount--;
+
 	}
 
 	handles[newfd] = handles[oldfd];
 	handles[newfd]->refcount++;
 
-	return newfd;
-
-}
-
-int dup2(int oldfd, int newfd) {
-
-	__lock_acquire_recursive (__hndl_lock);
-
-	newfd = __dup2(oldfd,newfd);
-
 	__lock_release_recursive (__hndl_lock);
 
+	if ( NULL != handle ) {
+
+		if (handle->refcount == 0 ) {
+
+			if( devoptab_list[handle->device]->close_r != NULL) {
+				devoptab_list[handle->device]->close_r(_REENT,(unsigned int)handle->fileStruct);
+			}
+			else {
+				__free_handle(handle);
+			}
+		}
+	}
+
 	return newfd;
 
 }
+
