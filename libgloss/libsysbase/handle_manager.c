@@ -16,7 +16,7 @@ static __handle* handles[MAX_HANDLES] = {
 	&__stderr_handle
 };
 
-__LOCK_INIT_RECURSIVE(static, __hndl_lock);
+__LOCK_INIT(static, __hndl_lock);
 
 void __free_handle(__handle *handle) {
 
@@ -35,12 +35,12 @@ void __release_handle(int fd) {
 
 	if ( fd <0 || fd >= MAX_HANDLES ) return;
 
-	__lock_acquire_recursive (__hndl_lock);
+	__lock_acquire (__hndl_lock);
 
 	__free_handle(handles[fd]);
 	handles[fd] = NULL;
 
-	__lock_release_recursive (__hndl_lock);
+	__lock_release (__hndl_lock);
 
 }
 
@@ -48,7 +48,7 @@ int  __alloc_handle(size_t size) {
 
 	int i, ret = -1;
 
-	__lock_acquire_recursive (__hndl_lock);
+	__lock_acquire (__hndl_lock);
 
 	for ( i = 0; i < MAX_HANDLES; i++ ) {
 		if ( handles[i] == NULL ) break;
@@ -62,7 +62,7 @@ int  __alloc_handle(size_t size) {
 		}
 	}
 
-	__lock_release_recursive (__hndl_lock);
+	__lock_release (__hndl_lock);
 
 	return ret;
 }
@@ -78,10 +78,10 @@ __handle *__get_handle(int fd) {
 int dup(int oldfd) {
 	int i, ret =-1;
 
-	__lock_acquire_recursive (__hndl_lock);
+	__lock_acquire (__hndl_lock);
 
 	if (handles[oldfd]==NULL) {
-		__lock_release_recursive (__hndl_lock);
+		__lock_release (__hndl_lock);
 		errno = EBADF;
 		return -1;
 	}
@@ -96,7 +96,7 @@ int dup(int oldfd) {
 		handles[oldfd]->refcount++;
 		ret = i;
 	}
-	__lock_release_recursive (__hndl_lock);
+	__lock_release (__hndl_lock);
 
 	return ret;
 
@@ -105,21 +105,21 @@ int dup(int oldfd) {
 int dup2(int oldfd, int newfd) {
 
 
-	__lock_acquire_recursive (__hndl_lock);
+	__lock_acquire (__hndl_lock);
 
 	if ( newfd < 0 || newfd >= MAX_HANDLES ||
 
 		 oldfd < 0 || oldfd >= MAX_HANDLES ||
 		 handles[oldfd] == NULL ) {
 
-		__lock_release_recursive (__hndl_lock);
+		__lock_release (__hndl_lock);
 		errno = EBADF;
 
 		return -1;
 	}
 
 	if ( newfd == oldfd ) {
-		__lock_release_recursive (__hndl_lock);
+		__lock_release (__hndl_lock);
 		return newfd;
 	}
 
@@ -135,17 +135,20 @@ int dup2(int oldfd, int newfd) {
 	handles[newfd] = handles[oldfd];
 	handles[newfd]->refcount++;
 
-	__lock_release_recursive (__hndl_lock);
+	__lock_release (__hndl_lock);
 
 	if ( NULL != handle ) {
 
 		if (handle->refcount == 0 ) {
 
 			if( devoptab_list[handle->device]->close_r != NULL) {
+
 				devoptab_list[handle->device]->close_r(_REENT,(unsigned int)handle->fileStruct);
-			}
-			else {
+
+			} else {
+
 				__free_handle(handle);
+
 			}
 		}
 	}
@@ -153,4 +156,3 @@ int dup2(int oldfd, int newfd) {
 	return newfd;
 
 }
-
