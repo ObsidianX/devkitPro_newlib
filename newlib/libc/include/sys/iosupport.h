@@ -74,10 +74,16 @@ typedef struct {
 	void *(*sbrk_r) (struct _rent *ptr, ptrdiff_t incr);
 	void (*exit) ( int rc );
 	int (*gettod_r) (struct _reent *ptr, struct timeval *tp, struct timezone *tz);
-	int (*lock_init) (_LOCK_T *lock,int recursive);
-	int (*lock_close) (_LOCK_T *lock);
-	int (*lock_release) (_LOCK_T *lock);
-	int (*lock_acquire) (_LOCK_T *lock);
+	void (*lock_init) (_LOCK_T *lock);
+	void (*lock_acquire) (_LOCK_T *lock);
+	int (*lock_try_acquire) (_LOCK_T *lock);
+	void (*lock_release) (_LOCK_T *lock);
+	void (*lock_close) (_LOCK_T *lock);
+	void (*lock_init_recursive) (_LOCK_RECURSIVE_T *lock);
+	void (*lock_acquire_recursive) (_LOCK_RECURSIVE_T *lock);
+	int (*lock_try_acquire_recursive) (_LOCK_RECURSIVE_T *lock);
+	void (*lock_release_recursive) (_LOCK_RECURSIVE_T *lock);
+	void (*lock_close_recursive) (_LOCK_RECURSIVE_T *lock);
 	struct _reent *(*getreent) ();
 } __syscalls_t;
 
