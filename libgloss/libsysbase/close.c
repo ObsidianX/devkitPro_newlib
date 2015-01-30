@@ -36,7 +36,7 @@ int _DEFUN(_close,(fileDesc),
 				if(devoptab_list[dev]->close_r)
 					ret = devoptab_list[dev]->close_r(ptr,fd);
 				else
-					ptr->_errno = ENOSYS;
+					ret = 0;
 
 				__release_handle(fileDesc);
 			} else {
