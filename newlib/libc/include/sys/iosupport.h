@@ -11,8 +11,6 @@ extern "C" {
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 
-#include <stdbool.h>
-
 enum	{
 	STD_IN,
 	STD_OUT,
@@ -69,19 +67,20 @@ typedef struct {
 
 extern const devoptab_t *devoptab_list[];
 
-
 typedef struct {
-	void *(*sbrk_r) (struct _rent *ptr, ptrdiff_t incr);
+	void *(*sbrk_r) (struct _reent *ptr, ptrdiff_t incr);
 	void (*exit) ( int rc );
-	int (*gettod_r) (struct _reent *ptr, struct timeval *tp, struct timezone *tz);
+	int  (*gettod_r) (struct _reent *ptr, struct timeval *tp, struct timezone *tz);
+	void (*malloc_lock) (struct _reent *ptr);
+	void (*malloc_unlock) (struct _reent *ptr);
 	void (*lock_init) (_LOCK_T *lock);
 	void (*lock_acquire) (_LOCK_T *lock);
-	int (*lock_try_acquire) (_LOCK_T *lock);
+	int  (*lock_try_acquire) (_LOCK_T *lock);
 	void (*lock_release) (_LOCK_T *lock);
 	void (*lock_close) (_LOCK_T *lock);
 	void (*lock_init_recursive) (_LOCK_RECURSIVE_T *lock);
 	void (*lock_acquire_recursive) (_LOCK_RECURSIVE_T *lock);
-	int (*lock_try_acquire_recursive) (_LOCK_RECURSIVE_T *lock);
+	int  (*lock_try_acquire_recursive) (_LOCK_RECURSIVE_T *lock);
 	void (*lock_release_recursive) (_LOCK_RECURSIVE_T *lock);
 	void (*lock_close_recursive) (_LOCK_RECURSIVE_T *lock);
 	struct _reent *(*getreent) ();
@@ -95,11 +94,9 @@ int RemoveDevice(const char* name);
 void setDefaultDevice( int device );
 const devoptab_t* GetDeviceOpTab (const char *name);
 
-
 void __release_handle(int fd);
 int  __alloc_handle(size_t size);
 __handle *__get_handle(int fd);
-
 
 #ifdef __cplusplus
 }
