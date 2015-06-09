@@ -21,7 +21,7 @@ int _DEFUN(_close,(fileDesc),
 #endif
 	int ret = -1;
 	unsigned int dev = 0;
-	unsigned int fd = -1;
+	int fd = -1;
 
 	if(fileDesc!=-1) {
 
@@ -31,7 +31,7 @@ int _DEFUN(_close,(fileDesc),
 			dev = handle->device;
 			handle->refcount--;
 			if (handle->refcount == 0 ) {
-				fd = (unsigned int)handle->fileStruct;
+				fd = (int)handle->fileStruct;
 
 				if(devoptab_list[dev]->close_r)
 					ret = devoptab_list[dev]->close_r(ptr,fd);
