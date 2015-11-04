@@ -29,7 +29,7 @@ _off_t _DEFUN (_lseek,(fileDesc, pos, dir),
 //---------------------------------------------------------------------------------
 	_off_t ret = -1;
 	unsigned int dev = 0;
-	unsigned int fd = -1;
+	int fd = -1;
 
 	__handle * handle;
 

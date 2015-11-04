@@ -23,7 +23,7 @@ int _DEFUN (_fstat,(fileDesc, st),
 #endif
 	int ret = -1;
 	unsigned int dev = 0;
-	unsigned int fd = -1;
+	int fd = -1;
 
 	__handle * handle = NULL;
 

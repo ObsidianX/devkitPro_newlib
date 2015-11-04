@@ -25,7 +25,7 @@ _ssize_t _DEFUN (_write, (fileDesc, ptr, len),
 #endif
 	int ret = -1;
 	unsigned int dev = 0;
-	unsigned int fd = -1;
+	int fd = -1;
 
 	__handle * handle = NULL;
 
