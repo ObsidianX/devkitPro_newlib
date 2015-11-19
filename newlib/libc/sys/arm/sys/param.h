@@ -10,10 +10,10 @@
 # define NOFILE	(60)
 #endif
 #ifndef PATHSIZE
-# define PATHSIZE (4096)
+# define PATHSIZE (1024)
 #endif
 
-#define MAXPATHLEN	4096
+#define MAXPATHLEN	PATHSIZE
 #define BIG_ENDIAN      4321
 #define LITTLE_ENDIAN   1234
 
