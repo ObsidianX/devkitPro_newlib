@@ -6,8 +6,6 @@ __syscalls_t __syscalls = {
 	NULL,	// sbrk
 	NULL,	// exit
 	NULL,	// gettod_r
-	NULL,	// malloc_lock
-	NULL,	// malloc_unlock
 	NULL,	// lock_init
 	NULL,	// lock_acquire
 	NULL,	// lock_try_acquire

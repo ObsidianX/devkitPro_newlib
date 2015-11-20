@@ -71,8 +71,6 @@ typedef struct {
 	void *(*sbrk_r) (struct _reent *ptr, ptrdiff_t incr);
 	void (*exit) ( int rc );
 	int  (*gettod_r) (struct _reent *ptr, struct timeval *tp, struct timezone *tz);
-	void (*malloc_lock) (struct _reent *ptr);
-	void (*malloc_unlock) (struct _reent *ptr);
 	void (*lock_init) (_LOCK_T *lock);
 	void (*lock_acquire) (_LOCK_T *lock);
 	int  (*lock_try_acquire) (_LOCK_T *lock);
