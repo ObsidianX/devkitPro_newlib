@@ -3,6 +3,7 @@
 #include <reent.h>
 #include <string.h>
 #include <errno.h>
+#include <stdlib.h>
 #include <sys/iosupport.h>
 #include <sys/param.h>
 
