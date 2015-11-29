@@ -128,6 +128,8 @@ int chdir (const char *path) {
 
 	pathPosition = strchr (temp_cwd , ':') + 1;
 
+	if (pathPosition == NULL) pathPosition = temp_cwd;
+
 	/* Make sure the path starts in the root directory */
 	if (pathPosition[0] != DIRECTORY_SEPARATOR_CHAR) {
 		r->_errno = ENOENT;
