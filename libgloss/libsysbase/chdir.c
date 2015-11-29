@@ -126,9 +126,13 @@ int chdir (const char *path) {
 		strncpy (temp_cwd, _current_working_directory, PATH_MAX);
 	}
 
-	pathPosition = strchr (temp_cwd , ':') + 1;
+	pathPosition = strchr (temp_cwd , ':');
 
-	if (pathPosition == NULL) pathPosition = temp_cwd;
+	if (pathPosition == NULL) {
+		pathPosition = temp_cwd;
+	} else {
+		pathPosition++;
+	}
 
 	/* Make sure the path starts in the root directory */
 	if (pathPosition[0] != DIRECTORY_SEPARATOR_CHAR) {
