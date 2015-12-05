@@ -14,13 +14,19 @@ void setDefaultDevice( int device ) {
 }
 
 //---------------------------------------------------------------------------------
+static ssize_t null_write(struct _reent *r,int fd,const char *ptr, size_t len) {
+//---------------------------------------------------------------------------------
+	return len;
+}
+
+//---------------------------------------------------------------------------------
 const devoptab_t dotab_stdnull = {
 //---------------------------------------------------------------------------------
 	"stdnull",	// device name
 	0,		// size of file structure
 	NULL,		// device open
 	NULL,		// device close
-	NULL,		// device write
+	null_write,	// device write
 	NULL,		// device read
 	NULL,		// device seek
 	NULL,		// device fstat
