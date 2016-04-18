@@ -62,14 +62,16 @@ const devoptab_t *devoptab_list[STD_MAX] = {
 //---------------------------------------------------------------------------------
 int FindDevice(const char* name) {
 //---------------------------------------------------------------------------------
-	int i = 0, namelen, dev = -1;
+	int i = 0, namelen, dev_namelen, dev = -1;
 
 	if (strchr(name, ':') == NULL) return defaultDevice;
+
+	dev_namelen = strlen(name);
 
 	while(i<STD_MAX) {
 		if(devoptab_list[i]) {
 			namelen = strlen(devoptab_list[i]->name);
-			if(strncmp(devoptab_list[i]->name,name,namelen)==0 ) {
+			if(dev_namelen == namelen && strncmp(devoptab_list[i]->name,name,namelen)==0 ) {
 				if ( name[namelen] == ':' || (isdigit(name[namelen]) && name[namelen+1] ==':' )) {
 					dev = i;
 					break;
